@@ -27,6 +27,13 @@ var FlexDashboard = (function () {
     // extend default options
     $.extend(true, _options, options);
 
+    // add ids to sections that don't have them (pandoc won't assign ids
+    // to e.g. sections with titles consisting of only chinese characters)
+    var nextId = 1;
+    $('.level1:not([id]),.level2:not([id]),.level3:not([id])').each(function() {
+      $(this).attr('id', 'dashboard-' + nextId++);
+    });
+
     // find navbar items
     var navbarItems = $('#flexdashboard-navbar');
     if (navbarItems.length)
@@ -232,6 +239,14 @@ var FlexDashboard = (function () {
     var icon = page.attr('data-icon');
     var navmenu = page.attr('data-navmenu');
 
+    // get hidden state (transfer this to navbar)
+    var hidden = page.hasClass('hidden');
+    page.removeClass('hidden');
+
+    // sanitize the id for use with bootstrap tabs
+    id = id.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_');
+    page.attr('id', id);
+
     // get the wrapper
     var wrapper = page.closest('.dashboard-page-wrapper');
 
@@ -264,6 +279,10 @@ var FlexDashboard = (function () {
     } else {
       container.append(li);
     }
+
+    // hide it if requested
+    if (hidden)
+      li.addClass('hidden');
   }
 
   function navbarLink(icon, title, href) {
@@ -401,13 +420,13 @@ var FlexDashboard = (function () {
       // hoist storyboard commentary into it's own section
       if (page.hasClass('storyboard')) {
         var commentaryHR = page.find('div.section.level3 hr');
-        if (commentaryHR.length) {
-          var commentary = commentaryHR.nextAll().detach();
+        commentaryHR.each(function() {
+          var commentary = $(this).nextAll().detach();
           var commentarySection = $('<div class="section level3"></div>');
           commentarySection.append(commentary);
-          commentarySection.insertAfter(commentaryHR.closest('div.section.level3'));
-          commentaryHR.remove();
-        }
+          commentarySection.insertAfter($(this).closest('div.section.level3'));
+          $(this).remove();
+        });
       }
 
       // force a non full screen layout by columns

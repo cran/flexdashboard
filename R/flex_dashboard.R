@@ -116,6 +116,13 @@ flex_dashboard <- function(fig_width = 6.0,
                            devel = FALSE,
                            ...) {
 
+  # manage list of exit_actions (backing out changes to knitr options)
+  exit_actions <- list()
+  on_exit <- function() {
+    for (action in exit_actions)
+      try(action())
+  }
+
   # function for resolving resources
   resource <- function(name) {
     system.file("rmarkdown/templates/flex_dashboard/resources", name,
@@ -168,12 +175,19 @@ flex_dashboard <- function(fig_width = 6.0,
   knitr_options$opts_chunk$comment = NA
 
   # force to fill it's container (unless the option is already set)
-  if (is.na(getOption('DT.fillContainer', NA)))
+  if (is.na(getOption('DT.fillContainer', NA))) {
     options(DT.fillContainer = TRUE)
+    exit_actions <- c(exit_actions, function() {
+      options(DT.fillContainer = NULL)
+    })
+  }
 
   # request that DT auto-hide navigation (unless the option is already set)
-  if (is.na(getOption('DT.autoHideNavigation', NA)))
-    options(DT.autoHideNavigation = TRUE);
+  if (is.na(getOption('DT.autoHideNavigation', NA))) {
+    exit_actions <- c(exit_actions, function() {
+      options(DT.autoHideNavigation = NULL)
+    })
+  }
 
   # add hook to capture fig.width and fig.height and serialized
   # them into the DOM
@@ -243,11 +257,21 @@ flex_dashboard <- function(fig_width = 6.0,
     }
   }
 
+  # capture the source file
+  source_file <- NULL
+  pre_knit <- function(input, ...) {
+    source_file <<- basename(input)
+  }
+
   # preprocessor
   pre_processor <- function (metadata, input_file, runtime, knit_meta,
                              files_dir, output_dir) {
 
     args <- c()
+
+    # initialize includes if needed
+    if (is.null(includes))
+      includes <- list()
 
     # helper function to add a graphic file dependency/variable
     add_graphic <- function(name, graphic) {
@@ -295,24 +319,6 @@ flex_dashboard <- function(fig_width = 6.0,
     if (is.null(fig_mobile))
       fig_mobile <- default_fig_mobile
 
-    # add FlexDashboard initialization
-    dashboardScript <- c(dashboardScript,
-      '<script type="text/javascript">',
-      '$(document).ready(function () {',
-      '  FlexDashboard.init({',
-      paste0('    theme: "', theme, '",'),
-      paste0('    fillPage: ', ifelse(fill_page,'true','false'), ','),
-      paste0('    orientation: "', orientation, '",'),
-      paste0('    storyboard: ', ifelse(storyboard,'true','false'), ','),
-      paste0('    defaultFigWidth: ', figSizePixels(fig_width), ','),
-      paste0('    defaultFigHeight: ', figSizePixels(fig_height), ','),
-      paste0('    defaultFigWidthMobile: ', figSizePixels(fig_mobile[[1]]), ','),
-      paste0('    defaultFigHeightMobile: ', figSizePixels(fig_mobile[[2]])),
-      '  });',
-      '});',
-      '</script>'
-    )
-
     # css
     if (!is.null(dashboardCss)) {
       dashboardCssFile <- tempfile(fileext = "html")
@@ -323,25 +329,34 @@ flex_dashboard <- function(fig_width = 6.0,
     # script
     dashboardScriptFile <- tempfile(fileext = ".html")
     writeLines(dashboardScript, dashboardScriptFile)
-    args <- c(args, pandoc_include_args(before_body = dashboardScriptFile))
+    includes$before_body <- c(includes$before_body, dashboardScriptFile)
+
+    # dashboard init script
+    dashboardInitScript <- c(
+       '<script type="text/javascript">',
+       '$(document).ready(function () {',
+       '  FlexDashboard.init({',
+       paste0('    theme: "', theme, '",'),
+       paste0('    fillPage: ', ifelse(fill_page,'true','false'), ','),
+       paste0('    orientation: "', orientation, '",'),
+       paste0('    storyboard: ', ifelse(storyboard,'true','false'), ','),
+       paste0('    defaultFigWidth: ', figSizePixels(fig_width), ','),
+       paste0('    defaultFigHeight: ', figSizePixels(fig_height), ','),
+       paste0('    defaultFigWidthMobile: ', figSizePixels(fig_mobile[[1]]), ','),
+       paste0('    defaultFigHeightMobile: ', figSizePixels(fig_mobile[[2]])),
+       '  });',
+       '});',
+       '</script>'
+    )
+    dashboardInitScriptFile <- tempfile(fileext = ".html")
+    writeLines(dashboardInitScript, dashboardInitScriptFile)
+    includes$after_body <- c(includes$after_body, dashboardInitScriptFile)
 
     # mobile figures
     args <- c(args, mobile_figure_args(mobile_figures))
 
     # source code embed if requested
     if (source_code_embed(source_code)) {
-
-      # determine the source file based on the input file
-      input_file <- basename(input_file)
-      source_file <- paste0(
-        file_path_sans_ext(file_path_sans_ext(basename(input_file))),
-        ".Rmd"
-      )
-
-      # if the file doesn't exist this could be runtime: shiny
-      # so try another way
-      if (!file.exists(source_file))
-        source_file <- parent.frame(n = 2)$knit_input
 
       # validate we have a file
       if (!file.exists(source_file))
@@ -355,8 +370,6 @@ flex_dashboard <- function(fig_width = 6.0,
     args <- c(args, pandoc_highlight_args(highlight, default = "pygments"))
 
     # user includes
-    if (is.null(includes))
-      includes <- list()
     args <- c(args, pandoc_include_args(in_header = includes$in_header,
                                         before_body = includes$before_body,
                                         after_body = includes$after_body))
@@ -397,7 +410,9 @@ flex_dashboard <- function(fig_width = 6.0,
                             args = args),
     keep_md = FALSE,
     clean_supporting = self_contained,
+    pre_knit = pre_knit,
     pre_processor = pre_processor,
+    on_exit = on_exit,
     base_format = html_document_base(smart = smart, theme = theme,
                                      self_contained = self_contained,
                                      lib_dir = lib_dir, mathjax = mathjax,
