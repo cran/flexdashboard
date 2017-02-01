@@ -40,8 +40,8 @@
 #'
 #'@param navbar Optional list of elements to be placed on the flexdashboard
 #'  navigation bar. Each element should be a list containing a \code{title}
-#'  and/or \code{icon} field, an \code{href} field and an optional \code{align}
-#'  ("left" or "right") field.
+#'  and/or \code{icon} field, an \code{href} field. Optional fields \code{target}
+#'  (e.g. "_blank") and \code{align} ("left" or "right") are also supported.
 #'
 #'@param orientation Determines whether level 2 headings are treated as
 #'  dashboard rows or dashboard columns.
@@ -260,7 +260,7 @@ flex_dashboard <- function(fig_width = 6.0,
   # capture the source file
   source_file <- NULL
   pre_knit <- function(input, ...) {
-    source_file <<- basename(input)
+    source_file <<- input
   }
 
   # preprocessor
@@ -327,9 +327,11 @@ flex_dashboard <- function(fig_width = 6.0,
     }
 
     # script
-    dashboardScriptFile <- tempfile(fileext = ".html")
-    writeLines(dashboardScript, dashboardScriptFile)
-    includes$before_body <- c(includes$before_body, dashboardScriptFile)
+    if (!is.null(dashboardScript)) {
+      dashboardScriptFile <- tempfile(fileext = ".html")
+      writeLines(dashboardScript, dashboardScriptFile)
+      includes$before_body <- c(includes$before_body, dashboardScriptFile)
+    }
 
     # dashboard init script
     dashboardInitScript <- c(
