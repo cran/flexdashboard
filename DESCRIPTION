@@ -1,7 +1,7 @@
 Package: flexdashboard
 Type: Package
 Title: R Markdown Format for Flexible Dashboards
-Version: 0.4
+Version: 0.5
 Description: Format for converting an R Markdown document to a grid oriented
   dashboard. The dashboard flexibly adapts the size of it's components to the
   containing web page.
@@ -32,9 +32,9 @@ Imports: tools, jsonlite, htmltools, knitr (>= 1.13), htmlwidgets (>=
 Suggests: testthat
 LazyData: TRUE
 License: MIT + file LICENSE
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2017-01-31 16:25:23 UTC; jjallaire
+Packaged: 2017-03-13 14:14:47 UTC; jjallaire
 Author: JJ Allaire [aut, cre],
   RStudio [cph],
   Keen IO [ctb, cph] (Dashboard CSS),
@@ -54,4 +54,4 @@ Author: JJ Allaire [aut, cre],
   Joe Cheng [ctb] (Examples)
 Maintainer: JJ Allaire <jj@rstudio.com>
 Repository: CRAN
-Date/Publication: 2017-02-01 01:29:56
+Date/Publication: 2017-03-13 17:11:06
