@@ -203,11 +203,13 @@ var FlexDashboard = (function () {
         for (var j = 0; j<item.items.length; j++) {
           var subItem = item.items[j];
           var li = $('<li></li>');
-          li.append(navbarLink(subItem.icon, subItem.title, subItem.href, subItem.target));
+          var a = navbarLink(subItem.icon, subItem.title, subItem.href, subItem.target);
+          a.removeClass("nav-link").addClass("dropdown-item");
+          li.append(a);
           menu.append(li);
         }
       } else {
-        var li = $('<li></li>');
+        var li = $('<li class="nav-item"></li>');
         li.append(navbarLink(item.icon, item.title, item.href, item.target));
         container.append(li);
       }
@@ -222,7 +224,7 @@ var FlexDashboard = (function () {
     if (existingMenu.length > 0) {
       return existingMenu.children('ul');
     } else {
-      var li = $('<li></li>');
+      var li = $('<li class="nav-item"></li>');
       if (id)
         li.attr('id', id);
       li.addClass('dropdown');
@@ -235,6 +237,7 @@ var FlexDashboard = (function () {
       var a = navbarLink(icon, title, "#");
       a.addClass('dropdown-toggle');
       a.attr('data-toggle', 'dropdown');
+      a.attr('data-bs-toggle', 'dropdown');
       a.attr('role', 'button');
       a.attr('aria-expanded', 'false');
       li.append(a);
@@ -289,8 +292,10 @@ var FlexDashboard = (function () {
     if (navmenu) {
       var menuId = navmenu.replace(/\s+/g, '');
       var menu = navbarMenu(menuId, null, navmenu, container);
+      li.find("> a").removeClass("nav-link").addClass("dropdown-item");
       menu.append(li);
     } else {
+      li.addClass("nav-item")
       container.append(li);
     }
 
@@ -301,7 +306,7 @@ var FlexDashboard = (function () {
 
   function navbarLink(icon, title, href, target) {
 
-    var a = $('<a></a>');
+    var a = $('<a class="nav-link"></a>');
     if (icon) {
 
       // get the name of the icon set and icon
@@ -359,7 +364,6 @@ var FlexDashboard = (function () {
      var serviceLinks = {
       "twitter": "https://twitter.com/share?text=" + encodeURIComponent(document.title) + "&url="+encodeURIComponent(location.href),
       "facebook": "https://www.facebook.com/sharer/sharer.php?s=100&p[url]="+encodeURIComponent(location.href),
-      "google-plus": "https://plus.google.com/share?url="+encodeURIComponent(location.href),
       "linkedin": "https://www.linkedin.com/shareArticle?mini=true&url="+encodeURIComponent(location.href) + "&title=" + encodeURIComponent(document.title),
       "pinterest": "https://pinterest.com/pin/create/link/?url="+encodeURIComponent(location.href) + "&description=" + encodeURIComponent(document.title)
     };
@@ -976,7 +980,8 @@ var FlexDashboard = (function () {
 
     // check for fade option
     var fade = tabset.hasClass("tabset-fade");
-    var navClass = "nav-tabs";
+    var pills = tabset.hasClass("tabset-pills");
+    var navClass = pills ? "nav-pills" : "nav-tabs";
 
     // determine the heading level of the tabset and tabs
     var match = tabset.attr('class').match(/level(\d) /);
@@ -997,6 +1002,7 @@ var FlexDashboard = (function () {
     $(tabs[0]).before(tabContent);
 
     // build the tabset
+    var activeTab = 0;
     tabs.each(function(i) {
 
       // get the tab div
@@ -1004,6 +1010,10 @@ var FlexDashboard = (function () {
 
       // get the id then sanitize it for use with bootstrap tabs
       var id = tab.attr('id');
+
+      // see if this is marked as the active tab
+      if (tab.hasClass('active'))
+        activeTab = i;
 
       // sanitize the id for use with bootstrap tabs
       id = id.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_');
@@ -1014,14 +1024,12 @@ var FlexDashboard = (function () {
       var headingDom = heading.contents();
 
       // build and append the tab list item
-      var a = $('<a role="tab" data-toggle="tab"></a>');
+      var a = $('<a role="tab" data-toggle="tab" class="nav-link"></a>');
       a.append(headingDom);
       a.attr('href', '#' + id);
       a.attr('aria-controls', id);
-      var li = $('<li role="presentation"></li>');
+      var li = $('<li role="presentation" class="nav-item"></li>');
       li.append(a);
-      if (i === 0)
-        li.attr('class', 'active');
       tabList.append(li);
 
       // set it's attributes
@@ -1031,15 +1039,17 @@ var FlexDashboard = (function () {
       tab.addClass('no-title');
       if (fade)
         tab.addClass('fade');
-      if (i === 0) {
-        tab.addClass('active');
-        if (fade)
-          tab.addClass('in');
-      }
 
       // move it into the tab content div
       tab.detach().appendTo(tabContent);
     });
+
+    // set active tab
+    $(tabList.children()[activeTab]).tab("show");
+    var active = $(tabContent.children('div.section')[activeTab]);
+    active.addClass('active');
+    if (fade)
+      active.addClass('in');
 
     // add nav-tabs-custom
     tabset.addClass('nav-tabs-custom');
@@ -1281,111 +1291,11 @@ var FlexDashboard = (function () {
     }
   }
 
-
-  // get theme color
-  var themeColors = {
-    bootstrap: {
-      primary: "rgba(51, 122, 183, 0.4)",
-      info: "rgb(217, 237, 247)",
-      success: "rgb(223, 240, 216)",
-      warning: "rgb(252, 248, 227)",
-      danger: "rgb(242, 222, 222)"
-    },
-    cerulean: {
-      primary: "rgb(47, 164, 231)",
-      info: "rgb(217, 237, 247)",
-      success: "rgb(223, 240, 216)",
-      warning: "rgb(252, 248, 227)",
-      danger: "rgb(242, 222, 222)"
-    },
-    journal: {
-      primary: "rgba(235, 104, 100, 0.70)",
-      info: "rgb(217, 237, 247)",
-      success: "rgb(223, 240, 216)",
-      warning: "rgb(252, 248, 227)",
-      danger: "rgb(242, 222, 222)"
-    },
-    flatly: {
-      primary: "rgba(44, 62, 80, 0.70)",
-      info: "rgba(52, 152, 219, 0.70)",
-      success: "rgba(24, 188, 156, 0.70)",
-      warning: "rgba(243, 156, 18, 0.70)",
-      danger: "rgba(231, 76, 60, 0.70)"
-    },
-    readable: {
-      primary: "rgba(69, 130, 236, 0.4)",
-      info: "rgb(217, 237, 247)",
-      success: "rgb(223, 240, 216)",
-      warning: "rgb(252, 248, 227)",
-      danger: "rgb(242, 222, 222)"
-    },
-    spacelab: {
-      primary: "rgba(68, 110, 155, 0.25)",
-      info: "rgb(217, 237, 247)",
-      success: "rgb(223, 240, 216)",
-      warning: "rgb(252, 248, 227)",
-      danger: "rgb(242, 222, 222)"
-    },
-    united: {
-      primary: "rgba(221, 72, 20, 0.30)",
-      info: "rgb(217, 237, 247)",
-      success: "rgb(223, 240, 216)",
-      warning: "rgb(252, 248, 227)",
-      danger: "rgb(242, 222, 222)"
-    },
-    cosmo: {
-      primary: "rgba(39, 128, 227, 0.7)",
-      info: "rgba(153, 84, 187, 0.7)",
-      success: "rgba(63, 182, 24, 0.7)",
-      warning: "rgba(255, 117, 24, 0.7)",
-      danger: "rgba(255, 0, 57, 0.7)"
-    },
-    lumen: {
-      primary: "rgba(21, 140, 186, 0.70)",
-      info: "rgba(117, 202, 235, 0.90)",
-      success: "rgba(40, 182, 44, 0.70)",
-      warning: "rgba(255, 133, 27, 0.70)",
-      danger: "rgba(255, 65, 54, 0.70)"
-    },
-    paper: {
-      primary: "rgba(33, 150, 243, 0.35)",
-      info: "rgb(225, 190, 231)",
-      success: "rgb(223, 240, 216)",
-      warning: "rgb(255, 224, 178)",
-      danger: "rgb(249, 189, 187)"
-    },
-    sandstone: {
-      primary: "rgba(50, 93, 136, 0.3)",
-      info: "rgb(217, 237, 247)",
-      success: "rgb(223, 240, 216)",
-      warning: "rgb(252, 248, 227)",
-      danger: "rgb(242, 222, 222)"
-    },
-    simplex: {
-      primary: "rgba(217, 35, 15, 0.25)",
-      info: "rgb(217, 237, 247)",
-      success: "rgb(223, 240, 216)",
-      warning: "rgb(252, 248, 227)",
-      danger: "rgb(242, 222, 222)"
-    },
-    yeti: {
-      primary: "rgba(0, 140, 186, 0.298039)",
-      info: "rgb(217, 237, 247)",
-      success: "rgb(223, 240, 216)",
-      warning: "rgb(252, 248, 227)",
-      danger: "rgb(242, 222, 222)"
-    }
-  }
-  function themeColor(color) {
-    return themeColors[_options.theme][color];
-  }
-
   FlexDashboard.prototype = {
     constructor: FlexDashboard,
     init: init,
     isMobilePhone: isMobilePhone,
-    isFillPage: isFillPage,
-    themeColor: themeColor
+    isFillPage: isFillPage
   };
 
   return FlexDashboard;
@@ -1442,14 +1352,14 @@ window.FlexDashboardUtils = {
       return "";
   },
   manageActiveNavbarMenu: function () {
-    // remove active from anyone currently active
-    $('.navbar ul.nav').find('li').removeClass('active');
+    // remove active from currently active tabs
+    $('.navbar ul.nav .active').removeClass('active');
     // find the active tab
     var activeTab = $('.dashboard-page-wrapper.tab-pane.active');
     if (activeTab.length > 0) {
       var tabId = activeTab.attr('id');
       if (tabId)
-        $(".navbar ul.nav a[href='#" + tabId + "']").parents('li').addClass('active');
+        $(".navbar ul.nav a[href='#" + tabId + "']").tab("show");
     }
   }
 };
@@ -1531,16 +1441,6 @@ window.FlexDashboardComponents.push({
 window.FlexDashboardComponents.push({
   find: function(container) {
     return container.children('div[class^="shiny-"]');
-  }
-});
-
-// datatables
-window.FlexDashboardComponents.push({
-  find: function(container) {
-    return container.find('.datatables');
-  },
-  flex: function(fillPage) {
-    return fillPage;
   }
 });
 
@@ -1712,21 +1612,6 @@ window.FlexDashboardComponents.push({
     if (chartIcon)
       setIcon(chartIcon);
 
-    // set color based on data-background if necessary
-    var dataBackground = valueBox.attr('data-background');
-    if (dataBackground)
-      valueBox.css('background-color', bgColor);
-    else {
-      // default to bg-primary if no other background is specified
-      if (!valueBox.hasClass('bg-primary') &&
-          !valueBox.hasClass('bg-info') &&
-          !valueBox.hasClass('bg-warning') &&
-          !valueBox.hasClass('bg-success') &&
-          !valueBox.hasClass('bg-danger')) {
-        valueBox.addClass('bg-primary');
-      }
-    }
-
     // handle data attributes in valueOutputSpan
     function handleValueOutput(valueOutput) {
 
@@ -1740,19 +1625,30 @@ window.FlexDashboardComponents.push({
       if (dataIcon)
         setIcon(dataIcon);
 
-      // color
+      // If valueBox(color=) was an accent color, this attr should
+      // be populated with the accent color and the relevant CSS comes
+      // in through HTML dependencies
+      var dataColorAccent = valueOutput.attr('data-color-accent');
+      var valueBoxClasses = "value-box-" + (["primary", "info", "danger", "warning", "success"].join(" value-box-"));
+      if (dataColorAccent) {
+        valueBox.removeClass(valueBoxClasses);
+        valueBox.addClass('value-box-' + dataColorAccent);
+      }
+
+      // If valueBox(color=) was a CSS color, these other data-color-*
+      // attrs will be populated
       var dataColor = valueOutput.attr('data-color');
       if (dataColor) {
-        if (dataColor.indexOf('bg-') === 0) {
-          valueBox.css('background-color', '');
-          if (!valueBox.hasClass(dataColor)) {
-             valueBox.removeClass('bg-primary bg-info bg-warning bg-danger bg-success');
-             valueBox.addClass(dataColor);
-          }
-        } else {
-          valueBox.removeClass('bg-primary bg-info bg-warning bg-danger bg-success');
-          valueBox.css('background-color', dataColor);
-        }
+        valueBox.removeClass(valueBoxClasses);
+        valueBox.css('background-color', dataColor);
+      }
+      var dataColorText = valueOutput.attr('data-color-text');
+      if (dataColorText) {
+        valueBox.find(".inner").css('color', dataColorText);
+      }
+      var dataColorIcon = valueOutput.attr('data-color-icon');
+      if (dataColorIcon) {
+        valueBox.find(".icon").css('color', dataColorIcon);
       }
 
       // url

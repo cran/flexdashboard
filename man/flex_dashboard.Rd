@@ -10,7 +10,6 @@ flex_dashboard(
   fig_retina = 2,
   fig_mobile = TRUE,
   dev = "png",
-  smart = TRUE,
   self_contained = TRUE,
   favicon = NULL,
   logo = NULL,
@@ -39,23 +38,19 @@ flex_dashboard(
 
 \item{fig_height}{Default height (in inches) for figures}
 
-\item{fig_retina}{Scaling to perform for retina displays (defaults to 2).
-Note that for flexdashboard enabling retina scaling provides for both
-crisper graphics on retina screens but also much higher quality
-auto-scaling of R graphics within flexdashboard containers.}
+\item{fig_retina}{Scaling to perform for retina displays (defaults to 2). Note
+that for flexdashboard enabling retina scaling provides for both crisper
+graphics on retina screens but also much higher quality auto-scaling of R
+graphics within flexdashboard containers.}
 
 \item{fig_mobile}{Create an additional rendering of each R graphics figure
-optimized for rendering on mobile devices oriented in portrait mode.
-If \code{TRUE}, creates a figure which is 3.75 x 4.80 inches wide;
-if \code{FALSE}, create no additional figure for mobile devices;
-if a numeric vector of length 2, creates a mobile figure with the
-specified width and height.}
+optimized for rendering on mobile devices oriented in portrait mode. If
+\code{TRUE}, creates a figure which is 3.75 x 4.80 inches wide; if
+\code{FALSE}, create no additional figure for mobile devices; if a numeric
+vector of length 2, creates a mobile figure with the specified width and
+height.}
 
 \item{dev}{Graphics device to use for figure output (defaults to png)}
-
-\item{smart}{Produce typographically correct output, converting straight
-quotes to curly quotes, \code{---} to em-dashes, \code{--} to en-dashes, and
-\code{...} to ellipses.}
 
 \item{self_contained}{Produce a standalone HTML file with no external
 dependencies, using data: URIs to incorporate the contents of linked
@@ -63,20 +58,19 @@ scripts, stylesheets, images, and videos. Note that even for self contained
 documents MathJax is still loaded externally (this is necessary because of
 its size).}
 
-\item{favicon}{Path to graphic to be used as a favicon for the dashboard.
-Pass \code{NULL} to use no favicon.}
+\item{favicon}{Path to graphic to be used as a favicon for the dashboard. Pass
+\code{NULL} to use no favicon.}
 
 \item{logo}{Path to graphic to be used as a logo for the dashboard. Pass
-\code{NULL} to not include a logo. Note
-that no scaling is performed on the logo image, so it should fit exactly
-within the dimensions of the navigation bar (48 pixels high for the
-default "cosmo" theme, other themes may have slightly different navigation
-bar heights).}
+\code{NULL} to not include a logo. Note that no scaling is performed on the
+logo image, so it should fit exactly within the dimensions of the navigation
+bar (48 pixels high for the default "cosmo" theme, other themes may have
+slightly different navigation bar heights).}
 
 \item{social}{Specify a character vector of social sharing services to
 automatically add sharing links for them on the \code{navbar}. Valid values
-are "twitter", "facebook", "google-plus", "linkedin", and "pinterest" (more
-than one service can be specified).}
+are "twitter", "facebook", "linkedin", and "pinterest" (more than one
+service can be specified).}
 
 \item{source_code}{URL for source code of dashboard (used primarily for
 publishing flexdashboard examples). Automatically creates a \code{navbar}
@@ -84,8 +78,9 @@ item which links to the source code.}
 
 \item{navbar}{Optional list of elements to be placed on the flexdashboard
 navigation bar. Each element should be a list containing a \code{title}
-and/or \code{icon} field, an \code{href} field. Optional fields \code{target}
-(e.g. "_blank") and \code{align} ("left" or "right") are also supported.}
+and/or \code{icon} field, an \code{href} field. Optional fields
+\code{target} (e.g. "_blank") and \code{align} ("left" or "right") are also
+supported.}
 
 \item{orientation}{Determines whether level 2 headings are treated as
 dashboard rows or dashboard columns.}
@@ -95,16 +90,26 @@ charts so they completely fill the page; "scroll" to layout charts at their
 natural height, scrolling the page if necessary.}
 
 \item{storyboard}{\code{TRUE} to use a storyboard layout scheme that places
-each dashboard component in a navigable storyboard frame. When a
-storyboard layout is used the \code{orientation} and \code{vertical_layout}
-arguments are ignored. When creating a dashbaord with multiple pages you
-should apply the `{.storyboard}` attribute to individual pages rather
-than using the global \code{storyboard} option.}
+each dashboard component in a navigable storyboard frame. When a storyboard
+layout is used the \code{orientation} and \code{vertical_layout} arguments
+are ignored. When creating a dashbaord with multiple pages you should apply
+the `{.storyboard}` attribute to individual pages rather than using the
+global \code{storyboard} option.}
 
-\item{theme}{Visual theme ("default", "bootstrap", "cerulean", "journal",
-"flatly", "readable", "spacelab", "united", "cosmo", "lumen", "paper",
-"sandstone", "simplex", or "yeti"). The "cosmo" theme is used when "default"
-is specified.}
+\item{theme}{One of the following:
+* A [bslib::bs_theme()] object (or a list of [bslib::bs_theme()] argument values)
+* Use this option to choose any [Bootstrap
+    version](https://rstudio.github.io/bslib/articles/bslib.html#bootstrap-versions),
+    [Bootswatch
+    theme](https://rstudio.github.io/bslib/articles/bslib.html#bootswatch-themes),
+    or implement a [custom
+    theme](https://rstudio.github.io/bslib/articles/bslib.html#custom-themes).
+  * In this case, any `.scss`/`.sass` files provided to the `css`
+    parameter may utilize the `theme`'s underlying Sass utilities
+    (e.g., variables, mixins, etc).
+* A character string specifying a [Bootswatch 3](https://bootswatch.com/3/)
+  theme name (for backwards-compatibility). The "cosmo" theme is used when
+  "default" is specified.}
 
 \item{highlight}{Syntax highlighting style. Supported styles include
 "default", "tango", "pygments", "kate", "monochrome", "espresso", "zenburn",
@@ -115,10 +120,14 @@ MathJax CDN. The "local" option uses a local version of MathJax (which is
 copied into the output directory). You can pass an alternate URL or pass
 \code{NULL} to exclude MathJax entirely.}
 
-\item{extra_dependencies}{Additional function arguments to pass to the
-base R Markdown HTML output formatter \code{\link[rmarkdown]{html_document_base}}}
+\item{extra_dependencies}{Extra dependencies as a list of the
+\code{html_dependency} class objects typically generated by
+\code{htmltools::\link{htmlDependency}()}.}
 
-\item{css}{One or more css files to include}
+\item{css}{CSS and/or Sass files to include. Files with an extension of .sass
+or .scss are compiled to CSS via \code{sass::sass()}. Also, if \code{theme} is a
+\code{\link[bslib:bs_theme]{bslib::bs_theme()}} object, Sass code may reference the relevant Bootstrap
+Sass variables, functions, mixins, etc.}
 
 \item{includes}{Named list of additional content to include within the
 document (typically created using the \code{\link[rmarkdown]{includes}} function).}
@@ -128,7 +137,7 @@ bootstrap, etc.) into. By default this will be the name of the document with
 \code{_files} appended to it.}
 
 \item{md_extensions}{Markdown extensions to be added or removed from the
-default definition or R Markdown. See the \code{\link[rmarkdown]{rmarkdown_format}} for
+default definition of R Markdown. See the \code{\link[rmarkdown]{rmarkdown_format}} for
 additional details.}
 
 \item{pandoc_args}{Additional command line options to pass to pandoc}
@@ -136,11 +145,11 @@ additional details.}
 \item{devel}{Enable development mode (used for development of the format
 itself, not useful for users of the format).}
 
-\item{resize_reload}{Disable the auto-reloading behavior when the window is resized.
-Useful when debugging large flexdashboard applications and this functionality
-is not needed.}
+\item{resize_reload}{Disable the auto-reloading behavior when the window is
+resized. Useful when debugging large flexdashboard applications and this
+functionality is not needed.}
 
-\item{...}{Unused}
+\item{...}{Other arguments to [rmarkdown::html_document_base()].}
 }
 \description{
 Format for converting an R Markdown document to a grid oriented dashboard
@@ -149,7 +158,7 @@ to its containing web page.
 }
 \details{
 See the flexdashboard website for additional documentation:
- \href{http://rmarkdown.rstudio.com/flexdashboard/}{http://rmarkdown.rstudio.com/flexdashboard/}
+ \href{https://pkgs.rstudio.com/flexdashboard/}{https://pkgs.rstudio.com/flexdashboard/}
 }
 \examples{
 \dontrun{

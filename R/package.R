@@ -12,15 +12,18 @@
 #' }
 #'
 #' See the flexdashboard website for additional documentation:
-#' \href{http://rmarkdown.rstudio.com/flexdashboard/}{http://rmarkdown.rstudio.com/flexdashboard/}
+#'   \href{https://pkgs.rstudio.com/flexdashboard/}{https://pkgs.rstudio.com/flexdashboard/}
 #'
 #' @import rmarkdown
 #' @import htmltools
+#' @import sass
+#' @import bslib
 #' @importFrom jsonlite toJSON
 #' @importFrom tools file_path_sans_ext
+#' @importFrom utils packageVersion
+#' @importFrom grDevices col2rgb
 #'
 #' @docType package
-#' @name flexdashboard
-NULL
+"_PACKAGE"
 
 

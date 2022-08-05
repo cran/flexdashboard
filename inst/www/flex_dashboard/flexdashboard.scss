@@ -1,16 +1,63 @@
+// This Sass file wants to be compiled with Bootstrap Sass headers
+
+// Colors
+$body-bg: #fff !default;
+$body-color: $text-color !default; // BS3 compat
+// TODO: combine gray-1 to gray-3 into one var?
+$gray-1: mix($body-bg, $body-color, 84.3%) !default; // #d7d7d7
+$gray-2: mix($body-bg, $body-color, 88.6%) !default; // #e2e2e2
+$gray-3: mix($body-bg, $body-color, 86.7%) !default; // #dddddd
+$primary: $brand-primary !default; // BS3 compat
+
+// Fonts
+$font-size-base: 14px !default;
+$font-size-lg:   $font-size-base * 1.25 !default;
+$font-size-sm:   $font-size-base * .875 !default;
+$h1-font-size:   $font-size-base * 2.5 !default;
+$h4-font-size:   $font-size-base * 1.5 !default;
+$font-weight-light: 300 !default;
+
+// Borders
+$border-width: 1px !default;
+$border-color: mix($body-bg, $body-color, 84.3%) !default;
+$border-radius: .25rem !default;
+
+// Sidebar
+$sidebar-bg: rgba($primary, 0.1) !default;
+
+// Custom nav
+$custom-nav-active-color: if(type-of($headings-color) == color, $headings-color, mix($body-bg, $body-color, 20%)) !default;
+$custom-nav-color: rgba($custom-nav-active-color, 0.6) !default;
+
+// Mixin shims (for BS3 compat)
+@mixin border-radius-shim($radius) {
+  @if mixin-exists("border-radius") {
+    @include border-radius($radius);
+  } @else {
+    border-radius: $radius;
+  }
+}
+@mixin font-size-shim($size) {
+  @if mixin-exists("font-size") {
+    @include font-size($size);
+  } @else {
+    font-size: $size;
+  }
+}
+
 
 /*
- Dashboard CSS from Keen IO Dashboards
+ Dashboard CSS derives from Keen IO Dashboards
  (https://github.com/keen/dashboards)
 */
 
 body {
-  background: #f2f2f2;
-  padding: 60px 0 0 8px; /* padding-top overridden by theme */
+  background: mix($body-bg, $body-color, 95%); // #f2f2f2
+  padding: 60px 0 0 8px; /* padding-top overridden by output template */
 }
 
 body hr {
-  border-color: #d7d7d7;
+  border-color: $gray-1;
   margin: 10px 0;
 }
 
@@ -29,7 +76,7 @@ body hr {
 
 .navbar-author {
   margin-left: 10px;
-  font-size: 15px;
+  @include font-size-shim($font-size-base * 1.1);
 }
 
 .navbar .dropdown-menu .fa {
@@ -46,19 +93,20 @@ body hr {
 .nav-tabs-custom,
 .sbframe-commentary
 {
-  background: #fff;
-  border: 1px solid #e2e2e2;
-  border-radius: 3px;
+  background: $body-bg;
+  border: $border-width solid $border-color;
+  @include border-radius-shim($border-radius);
   margin-bottom: 8px;
   margin-right: 8px;
 }
 
 .chart-title {
-  border-bottom: 1px solid #d7d7d7;
-  color: #666;
-  font-size: 14px;
-  font-weight: 300;
+  border-bottom: $border-width solid $border-color;
+  @include font-size-shim($font-size-base);
+  font-weight: $font-weight-light;
   padding: 7px 10px 4px;
+  color: $headings-color;
+  font-family: $headings-font-family;
 }
 
 .chart-wrapper .chart-title:empty {
@@ -72,10 +120,10 @@ body hr {
 }
 
 .chart-wrapper .chart-notes {
-  background: #fbfbfb;
-  border-top: 1px solid #e2e2e2;
-  color: #808080;
-  font-size: 12px;
+  background: mix($body-bg, $body-color, 98.5%);
+  border-top: $border-width solid $border-color;
+  color: mix($body-bg, $body-color, 50%);
+  @include font-size-shim($font-size-sm);
   padding: 8px 10px 5px;
 }
 
@@ -222,16 +270,16 @@ body hr {
 }
 
 .chart-stage .table-bordered > tbody > tr > td {
-  border-top: 1px solid #dddddd;
+  border-top: $border-width solid $border-color;
 }
 
 .chart-stage .table-bordered > thead > tr > th {
   border: none;
-  border-bottom: 2px solid #dddddd;
+  border-bottom: ($border-width*2) solid $border-color;
 }
 
 .bootstrap-table table>thead {
-  background-color: #fff;
+  background-color: $body-bg;
 }
 
 .bootstrap-table table.data,
@@ -242,7 +290,7 @@ body hr {
 .bootstrap-table table.data>tbody>tr>th,
 .bootstrap-table table.shiny-table>tbody>tr>th {
   border-top: none;
-  border-bottom: 2px solid #dddddd;
+  border-bottom: ($border-width*2) solid $border-color;
   padding: 5px;
 }
 
@@ -306,174 +354,54 @@ body hr {
   overflow: hidden;
 }
 
-/* Value box */
-
-.value-box {
-  border-radius: 2px;
-  position: relative;
-  display: block;
-  margin-right: 8px;
-  margin-bottom: 8px;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-}
-
-.value-box > .inner {
-  padding: 10px;
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-.value-box .value {
-  font-size: 38px;
-  font-weight: bold;
-  margin: 0 0 3px 0;
-  white-space: nowrap;
-  padding: 0;
-}
-
-.value-box .caption {
-  font-size: 15px;
-}
-.value-box .caption > small {
-  display: block;
-  font-size: 13px;
-  margin-top: 5px;
-}
-
-.value-box .icon i {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 80px;
-  color: rgba(0, 0, 0, 0.15);
-}
-
-.linked-value:hover {
-  cursor: pointer;
-}
-
-.value-box.linked-value:hover {
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
-}
-
 /* STORYBOARD */
-
-.storyboard-nav button {
-  background: transparent;
-  border: 0;
-  opacity: .3;
-  outline: none;
-  padding: 0;
-}
-
-.storyboard-nav button:hover,
-.storyboard-nav button:hover {
-  opacity: .5;
-}
-
-.storyboard-nav button:disabled,
-.storyboard-nav button:disabled {
-  opacity: .1;
-}
 
 .storyboard-nav .sbnext,
 .storyboard-nav .sbprev {
-  float: left;
-  width: 2%;
-  height: 120px;
-  font-size: 50px;
-}
-
-.storyboard-nav .sbprev {
-  text-align: left;
-  width: 2%;
-}
-
-.storyboard-nav .sbnext {
-  float: right;
-  text-align: right;
-  margin-right: 8px;
-}
-
-.storyboard-nav .sbframelist {
-  margin: 0 auto;
-  width: 94%;
-  height: 120px;
-  overflow: hidden;
-  text-shadow: none;
-  margin-bottom: 8px;
-}
-
-.storyboard-nav .sbframelist ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  height: 100%;
+  @include font-size-shim($font-size-base * 3.5);
+  color: $body-color;
 }
 
 .storyboard-nav .sbframelist ul li {
-  float: left;
-  width: 270px;
-  height: 100%;
-  padding: 10px 10px 10px 10px;
-  margin-right: 8px;
-  background: #fff;
-  border: 1px solid #e2e2e2;
-  border-radius: 3px;
-  color: #3a3c47;
-  text-align: left;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.storyboard-nav .sbframelist ul li:last-child {
-  margin-right: 0px;
+  background: $body-bg;
+  border: $border-width solid $border-color;
+  @include border-radius-shim($border-radius);
+  color: mix($body-bg, $body-color, 25%); // #3a3c47
+  @include font-size-shim($font-size-base);
 }
 
 .storyboard-nav .sbframelist ul li.active {
-  color: #fff;
-  background: #B8B8B8;
+  color: $body-bg;
+  background-color: rgba($primary, 0.7);
 }
 
 .sbframe-commentary {
-  width: 300px;
-  background: #fbfbfb;
-  font-size: 14px;
-}
-
-.sbframe-commentary ul {
-  padding-left: 22px;
-}
-
-.sbframe.active {
-  display: flex;
-}
-
-.sbframe:not(.active) {
-  display: none;
+  background: mix($body-bg, $body-color, 98.4%); // #fbfbfb
+  @include font-size-shim($font-size-base);
 }
 
 /* NAV TABS */
 
 .nav-tabs-custom > .nav-tabs {
   margin: 0;
-  border-bottom: 1px solid #d7d7d7;
-  color: #666;
-  font-size: 14px;
-  font-weight: 300;
+  border-bottom: $border-width solid $border-color;
+  color: $custom-nav-color;
+  @include font-size-shim($font-size-base);
+  font-weight: $font-weight-light;
+  font-family: $headings-font-family;
   border-top-right-radius: 3px;
   border-top-left-radius: 3px;
 }
 .nav-tabs-custom > .nav-tabs > li {
-  border-top: 3px solid transparent;
+  border-top: ($border-width*3) solid transparent;
   margin-bottom: -1px;
   margin-right: 5px;
 }
 .nav-tabs-custom > .nav-tabs > li > a,
 .nav-tabs-custom > .nav-tabs > li > a:active {
-  color: #666;
-  font-weight: 300;
-  font-size: 14px;
+  color: $custom-nav-active-color;
+  font-weight: $font-weight-light;
+  @include font-size-shim($font-size-base);
   border-radius: 0;
   padding: 3px 10px 5px;
   text-transform: none;
@@ -484,7 +412,7 @@ body hr {
 }
 
 .nav-tabs-custom > .nav-tabs > li > a.text-muted {
-  color: #999;
+  color: $custom-nav-color;
 }
 .nav-tabs-custom > .nav-tabs > li > a,
 .nav-tabs-custom > .nav-tabs > li > a:hover {
@@ -492,7 +420,7 @@ body hr {
   margin: 0;
 }
 .nav-tabs-custom > .nav-tabs > li > a:hover {
-  color: #999;
+  color: $custom-nav-color;
 }
 .nav-tabs-custom > .nav-tabs > li:not(.active) > a:hover,
 .nav-tabs-custom > .nav-tabs > li:not(.active) > a:focus,
@@ -500,17 +428,17 @@ body hr {
   border-color: transparent;
 }
 .nav-tabs-custom > .nav-tabs > li.active {
-  border-top-color: #3c8dbc;
+  border-top-color: $primary;
 }
 .nav-tabs-custom > .nav-tabs > li.active > a,
 .nav-tabs-custom > .nav-tabs > li.active:hover > a {
-  background-color: #fff;
-  color: #666;
+  background-color: $body-bg;
+  color: $custom-nav-active-color;
 }
 .nav-tabs-custom > .nav-tabs > li.active > a {
   border-top-color: transparent;
-  border-left-color: #d7d7d7;
-  border-right-color: #d7d7d7;
+  border-left-color: $gray-1;
+  border-right-color: $gray-1;
 }
 .nav-tabs-custom > .nav-tabs > li:first-of-type {
   margin-left: 0;
@@ -531,14 +459,14 @@ body hr {
   border-left-width: 1px;
 }
 .nav-tabs-custom > .nav-tabs.pull-right > li:first-of-type.active > a {
-  border-left-color: #d7d7d7;
+  border-left-color: $gray-1;
   border-right-color: transparent;
 }
 .nav-tabs-custom > .nav-tabs > li.header {
   line-height: 35px;
   padding: 0 10px;
-  font-size: 20px;
-  color: #666;
+  @include font-size-shim($h4-font-size);
+  color: $custom-nav-active-color;
 }
 .nav-tabs-custom > .nav-tabs > li.header > .fa,
 .nav-tabs-custom > .nav-tabs > li.header > .glyphicon,
@@ -546,7 +474,7 @@ body hr {
   margin-right: 5px;
 }
 .nav-tabs-custom > .tab-content {
-  background: #fff;
+  background: $body-bg;
   padding: 0;
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
@@ -557,7 +485,7 @@ body hr {
 }
 
 .nav-tabs-custom > .tab-content > .chart-wrapper {
-  background: #fff;
+  background: $body-bg;
   border: none;
   margin: 0;
 }
@@ -573,7 +501,7 @@ body hr {
 .nav-tabs-custom .dropdown.open > a:active,
 .nav-tabs-custom .dropdown.open > a:focus {
   background: transparent;
-  color: #999;
+  color: $custom-nav-active-color;
 }
 
 
@@ -591,11 +519,12 @@ body hr {
 
 .section.sidebar {
   position: fixed;
-  top: 51px; /* overridden by theme */
+  top: 51px; /* overridden by output template */
   left: 0;
   bottom: 0;
-  border-right: 1px solid #e2e2e2;
-  background-color: white; /* overridden by theme */
+  border-right: $border-width solid $border-color;
+  background-color: $sidebar-bg;
+  padding-top: 10px;
   padding-left: 10px;
   padding-right: 10px;
   visibility: hidden;
@@ -624,7 +553,7 @@ body hr {
 }
 
 .featherlight:last-of-type {
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba($body-color, 0.7);
 }
 
 .featherlight-inner {
@@ -634,8 +563,8 @@ body hr {
 .featherlight-content pre {
   margin: 0;
   border: 0;
-  background: #fff;
-  font-size: 12px;
+  background: $body-bg;
+  @include font-size-shim($font-size-sm);
 }
 
 .unselectable {
@@ -670,11 +599,11 @@ body hr {
 
 
 table.dataTable thead th {
-  border-bottom: 1px solid #d7d7d7;
+  border-bottom: $border-width solid $border-color;
 }
 
 .dataTables_wrapper.no-footer .dataTables_scrollBody {
-  border-bottom: 1px solid #d7d7d7;
+  border-bottom: $border-width solid $border-color;
 }
 
 /* Mobile phone only CSS */
@@ -690,6 +619,4 @@ table.dataTable thead th {
 .mobile-figure {
   display: none;
 }
-
-
 

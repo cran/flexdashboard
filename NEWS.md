@@ -1,3 +1,31 @@
+flexdashboard 0.6.0
+===========
+
+This release adds integration with the new [`{bslib}` package](https://rstudio.github.io/bslib/index.html), making it much easier to customize the overall appearance of the dashboard (and/or upgrade to Bootstrap 4). See the [new website's](https://pkgs.rstudio.com/flexdashboard/) new [article on theming](https://pkgs.rstudio.com/flexdashboard//articles/theme.html) to learn more.
+
+### Possibly breaking changes
+
+* The `smart` argument was removed from `flexdashboard::flex_dashboard` since it was removed in rmarkdown 2.2 (relatedly, we now require rmarkdown 2.2 or higher). (#301)
+* The `window.FlexDashboard.themeColor` JavaScript object property is no longer available. Resolving of theming accent colors should now be done server-side via `{bslib}`'s [dynamic theming tools](https://rstudio.github.io/bslib/articles/custom-components.html). (#305) 
+
+### Improvements & fixes
+
+* Close #343: Fix an issue with order of dependencies with `shiny_prerendered` following previous changes in rmarkdown - rstudio/rmarkdown#2064. (#344)  
+
+* Closed #315, #321, and #286: `DT::datatable()` now fills its container correctly inside of `flexdashboard::flex_dashboard()`. (#322) 
+
+* Closed #310: An `.active` class may now be added to a particular `.tabset` tab to control which tab is shown by default. (#311)
+
+* Closed #306: A `.tabset-pills` class may now be added to `.tabset` to render pills instead of tabs. (#307)
+
+* Closed #297, #254: `gauge()` now uses justgage.js 1.4.0, allowing  `renderGauge()` to properly update various labels and `sectors` on redraw. (#301)
+
+* Closed #300: When a custom `{bslib}` theme is provided to `flex_dashboard`, `gauge()` and `viewBox()` now generate default styles to match it. (#301, #305)
+
+* Closed #227: Fixed a bug with `source_code: embed` producing errors because code wasn't being escaped before being included in HTML. (#228, thanks @cderv) 
+
+* Added padding to the top of the sidebar. (#294)
+
 flexdashboard 0.5.2
 ===========
 

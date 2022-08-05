@@ -13,7 +13,7 @@
 #'   another dashboard page (e.g. "#details").
 #'
 #' @details See the flexdashboard website for additional documentation:
-#'  \href{http://rmarkdown.rstudio.com/flexdashboard/using.html#value_boxes}{http://rmarkdown.rstudio.com/flexdashboard/using.html#value_boxes}
+#'  <https://pkgs.rstudio.com/flexdashboard/articles/using.html#value-boxes-1>
 #'
 #' @examples
 #' library(flexdashboard)
@@ -24,35 +24,112 @@
 #'
 #' @export
 valueBox <- function(value, caption = NULL, icon = NULL, color = NULL, href = NULL) {
+  color <- color %||% "primary"
+  stopifnot(is.character(color) && length(color) == 1)
 
-  # resolve background color
-  if (!is.null(color) && color %in% c("primary", "info", "success", "warning", "danger"))
-    color <- paste0("bg-", color)
+  if (is_accent_color(color)) {
+    attachDependencies(
+      valueBoxTag(
+        value = value, caption = caption, icon = icon, href = href,
+        `data-color-accent` = color
+      ),
+      # Accent colors can be customized in "real-time"
+      # https://rstudio.github.io/bslib/articles/theming.html#dynamically-themeable-component
+      bslib::bs_dependency_defer(valueBoxDynamicAccentCSS),
+      append = TRUE
+    )
+  } else {
+    # If we know the color code now, compute the contrasts now, and attach them
+    # as attributes
+    color <- htmltools::parseCssColors(color)
+    colorText <- getColorContrast(color)
+    colorIcon <- sassValue(
+      paste0("mix(", color, ",", getColorContrast(colorText), ",50%)")
+    )
+    valueBoxTag(
+      value = value, caption = caption, icon = icon, href = href,
+      `data-color` = color, `data-color-text` = colorText,
+      `data-color-icon` = colorIcon
+    )
+  }
+}
 
-  # build the value output
-  valueOutput <- tags$span(class="value-output",
-            `data-caption` = caption,
-            `data-icon` = icon,
-            `data-color` = color,
-            `data-href` = href,
+valueBoxTag <- function(value, caption, icon, href, ...) {
+  tag <- tags$span(
+    class = "value-output",
+    `data-caption` = caption,
+    `data-icon` = icon,
+    `data-href` = href,
+    ...,
     value
   )
+  attachDependencies(tag, valueBoxCoreDependencies(icon))
+}
 
-  # attach font dependency if necessary
-  hasPrefix <- function(x, prefix) {
-    if (!is.null(x))
-      grepl(paste0('^', prefix), x)
-    else
-      FALSE
+
+valueBoxCoreDependencies <- function(icon) {
+  deps <- list(htmlDependency(
+    name = "value-box-core",
+    version = get_package_version("flexdashboard"),
+    package = "flexdashboard",
+    src = "www/flex_dashboard",
+    stylesheet = "value-box.css"
+  ))
+  icons <- html_dependencies_fonts(
+    isTRUE(grepl('^fa', icon)),
+    isTRUE(grepl('^ion', icon))
+  )
+  if (length(icons)) {
+    deps <- append(deps, icons)
   }
-  fontAwesome <- hasPrefix(icon, 'fa')
-  ionicons <-  hasPrefix(icon, 'ion')
-  deps <- html_dependencies_fonts(fontAwesome, ionicons)
-  if (length(deps) > 0)
-     valueOutput <- attachDependencies(valueOutput, deps)
+  deps
+}
 
-  # return output
-  valueOutput
+valueBoxStaticAccentCSS <- function(theme) {
+  if (!is.character(theme)) return(NULL)
+  if (identical(theme, "default")) {
+    theme <- "bootstrap"
+  }
+  htmltools::htmlDependency(
+    name = "value-box-accent-static",
+    version = get_package_version("flexdashboard"),
+    package = "flexdashboard",
+    src = "www/flex_dashboard",
+    stylesheet = paste0("theme-", theme, "-value-box.css")
+  )
+}
+
+valueBoxDynamicAccentCSS <- function(theme) {
+  if (!bslib::is_bs_theme(theme)) return(NULL)
+
+  version <- get_package_version("flexdashboard")
+  bslib::bs_dependency(
+    sass::sass_file(resource("value-box-sass/accent-dynamic.scss")),
+    theme = theme,
+    name = "value-box-accent-dynamic",
+    version = version,
+    cache_key_extra = version
+  )
+}
+
+
+getColorContrast <- function(color) {
+  sass_func <- system_file("sass-utils", "color-contrast.scss", package = "bslib")
+  sassValue(
+    sprintf("color-contrast(%s, #1a1a1a)", color),
+    defaults = sass::sass_file(sass_func)
+  )
+}
+
+# sort of like Sass' @debug
+sassValue <- function(expr, defaults = "") {
+  out <- sass::sass(
+    list(defaults, sprintf("foo{bar:%s}", expr)),
+    options = sass::sass_options(output_style = "compressed")
+  )
+  out <- sub("foo{bar:", "", out, fixed = TRUE)
+  out <- sub("}", "", out, fixed = TRUE)
+  gsub("\n", "", out, fixed = TRUE)
 }
 
 
