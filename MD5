@@ -1,7 +1,7 @@
-abbd11720af0672d4da7f970364d0eba *DESCRIPTION
+f2c47300b3bfcdf70e8bffd2ec36d038 *DESCRIPTION
 86d570e2967dfc6b6aa30c1cf71b2bd2 *LICENSE
 9774c8c119131e4853c34d098768f838 *NAMESPACE
-13b1646ef8880f5f4a8720659b12b805 *NEWS.md
+24eb29cbbcc06d5d45b6005cba70ead4 *NEWS.md
 b65b045dd564c7464890b283d5e12a90 *R/bslib.R
 37cc1b3a058ccdcd116789029ad97dd7 *R/dependencies.R
 d184709384e6bc54cce2dbda273baf2c *R/flex_dashboard.R
@@ -39,7 +39,7 @@ bbbebb1d01dee52c7544e8d859702061 *inst/rmarkdown/templates/flex_dashboard_bslib/
 36977173d1e9c20d88e379b462e7c601 *inst/rmarkdown/templates/flex_dashboard_bslib/template.yaml
 2267cdb17e727a0393678c43154ec213 *inst/www/featherlight/featherlight.min.css
 b4805a80933e45c9a68330eb403571a4 *inst/www/featherlight/featherlight.min.js
-11e9ee4dc09e15601ee7fc69290e4db3 *inst/www/flex_dashboard/default.html
+a678fd45f8288358e2134e7ab0646a84 *inst/www/flex_dashboard/default.html
 dabc16fca5223fea905cff292c8e21ec *inst/www/flex_dashboard/fillpage.css
 7e626948cd6c03bdd66fe55a044790a5 *inst/www/flex_dashboard/flexdashboard.js
 7a38467223c7f69310904cd8bcd62750 *inst/www/flex_dashboard/flexdashboard.min.css
@@ -83,7 +83,7 @@ e678628027d0f075139b92602b7fb7b5 *inst/www/sly/sly.js
 8d3d1db5682a3fa24f32e1735127d6da *inst/www/stickytableheaders/jquery.stickytableheaders.min.js
 317d57b434342ba82f533a8f10d7c0cd *man/figures/NewRMarkdown.png
 69e2cf9e18e88e3525b8834e081ee1ee *man/figures/logo.png
-95f44e81a4b5b916169d6907682612b6 *man/flex_dashboard.Rd
+a0c1e1e93bd852feadf1257f7d023f86 *man/flex_dashboard.Rd
 e4d2d696015f6d7485676ec7f691e560 *man/flexdashboard-package.Rd
 f7471bcc712291176b70391a041e9eae *man/gauge-shiny.Rd
 6e91b3492d15ca7e99acff3364f9e001 *man/gauge.Rd
@@ -91,7 +91,7 @@ f7471bcc712291176b70391a041e9eae *man/gauge-shiny.Rd
 ce07d53edfa343bb98ac5d452220f9e3 *man/valueBox.Rd
 77a021c20e4a9943595392de681bef2b *tests/testthat.R
 ebf074f95972f2b0b04ac5e7365ecce9 *tests/testthat/test_accent_colors.R
-fe11e78f72f5d9defad928f1cb4f6040 *tests/testthat/test_built_css.R
+946bab960816d3000ed650fb51841d45 *tests/testthat/test_built_css.R
 e8470fa5e84c7aa7e66adf4b5ab4f26e *tests/testthat/test_format.R
 220540debfc636572885f4a5f5a8d80e *tools/updateCSS.R
 fa01fdaf7de1ce8b465d6a483d173ea5 *tools/updateJustGage.R
