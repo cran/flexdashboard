@@ -29,18 +29,19 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Carson Sievert \email{carson@rstudio.com} (\href{https://orcid.org/0000-0002-4958-2844}{ORCID})
+\strong{Maintainer}: Garrick Aden-Buie \email{garrick@posit.co} (\href{https://orcid.org/0000-0002-7111-0077}{ORCID})
 
 Authors:
 \itemize{
-  \item Richard Iannone \email{rich@rstudio.com} (\href{https://orcid.org/0000-0003-3925-190X}{ORCID})
-  \item JJ Allaire \email{jj@rstudio.com}
+  \item Carson Sievert \email{carson@posit.co} (\href{https://orcid.org/0000-0002-4958-2844}{ORCID})
+  \item Richard Iannone \email{rich@posit.co} (\href{https://orcid.org/0000-0003-3925-190X}{ORCID})
+  \item JJ Allaire \email{jj@posit.co}
   \item Barbara Borges \email{barb.b.ribeiro@gmail.com}
 }
 
 Other contributors:
 \itemize{
-  \item  RStudio [copyright holder]
+  \item Posit Software, PBC [copyright holder, funder]
   \item  Keen IO (Dashboard CSS) [contributor, copyright holder]
   \item Abdullah Almsaeed (Dashboard CSS) [contributor, copyright holder]
   \item Jonas Mosbech (StickyTableHeaders) [contributor, copyright holder]

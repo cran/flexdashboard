@@ -14,6 +14,7 @@ library(dplyr)
 library(viridisLite)
 library(forecast)
 library(treemap)
+library(arules)
 library(flexdashboard)
 
 thm <- 
@@ -55,7 +56,7 @@ n <- 4
 colstops <- data.frame(
   q = 0:n/n,
   c = substring(viridis(n + 1), 0, 7)) %>%
-  list.parse2()
+  list_parse2()
 
 highchart() %>%
   hc_add_series_map(usgeojson, USArrests, name = "Sales",
@@ -91,9 +92,7 @@ tm <- treemap(dfitemsg, index = c("category", "subcategory"),
               vSize = "sales", vColor = "sales",
               type = "value", palette = rev(viridis(6)))
 
-highchart() %>% 
-  hc_add_series_treemap(tm, allowDrillToNode = TRUE,
-                        layoutAlgorithm = "squarified") %>% 
+hctreemap(tm, allowDrillToNode = TRUE, layoutAlgorithm = "squarified") %>% 
   hc_add_theme(thm)
 ```
 
