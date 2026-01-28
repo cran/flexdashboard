@@ -1,3 +1,11 @@
+# flexdashboard 0.6.3
+
+* flexdashboard now prevents top margin from being applied to boxes created with flexdashboard's markdown syntax when Bootstrap 5 is used. (#443)
+
+* Allow using `theme.preset` without needing to set `theme.bootswatch` to `null`. (#444)
+
+* Closed #459: Fixed lost braces in certain rendering scenarios (@eliocamp).
+
 # flexdashboard 0.6.2
 
 ## New features
